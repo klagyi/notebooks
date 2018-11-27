@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>exec_kepler_tpf</title>
+<title>exec_tess_tic_search_for_dwarf_stars_around_hd_209458</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13119,44 +13119,14 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="title_ID"></a></p>
-<h1 id="Plotting-Images-from-Kepler-Target-Pixel-Files">Plotting Images from Kepler Target Pixel Files<a class="anchor-link" href="#Plotting-Images-from-Kepler-Target-Pixel-Files">&#182;</a></h1><p><br>
-This notebook tutorial demonstrates the loading and extracting of information from Kepler Target Pixel Files to plot images that show the pixels used to create data found in Kepler light curve files. 
-<br>
-<img style="float: right;" src="./tpf_fluxplot_28-29.png" alt="tpf_fluxplot_28-29" width="350"/>
-<img style="float: right;" src="./tpf_fluxplot0.png" alt="tpf_fluxplot0" width="350"/></p>
-<h3 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h3><div style="text-align: left"> <br> [Introduction](#intro_ID) <br> [Imports](#imports_ID) <br> [Getting the Data](#data_ID) <br> [Reading FITS Extensions](#extension_ID) <br> [Plotting the Images](#images_ID) <br> [The Aperture Extension](#aperture_ID) <br> [Additional Resources](#resources_ID) <br> [About this Notebook](#about_ID) </div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="intro_ID"></a></p>
-<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2><p><strong>Target Pixel File background:</strong>
-The pixels used to create data in the light curve files are contained within a predefined mask. Each target pixel file packages these pixels as a time series of images in a binary FITS table. These files can then be used to perform photometry on. The binary table in a Target Pixel File (TPF) holds columns of data that contain an array in each cell.</p>
-<p><strong>Some notes about the file:</strong> kplr008957091-2012277125453_lpd-targ.fits.gz
-<br>The filename contains phrases for identification, where</p>
+<h2 id="Query-TESS-Input-Catalog-for-Dwarf-Stars-around-the-star-HD-209458">Query TESS Input Catalog for Dwarf Stars around the star HD 209458<a class="anchor-link" href="#Query-TESS-Input-Catalog-for-Dwarf-Stars-around-the-star-HD-209458">&#182;</a></h2><p>This tutorial demonstrates how to do a cone search around the location of a known star (HD 209458) in the TESS Input Catalog and then filter those results to only dwarf stars.</p>
+<p>This tutorial uses Python and the astroquery module (astroquery-0.3.9.dev0). At the time of writing this requires installing the "bleeding edge" version of astroquery with pip. Information on how to install astroquery for MAST can be found on the <a href="http://astroquery.readthedocs.io/en/latest/mast/mast.html#">Astroquery site</a>. 
+This tutorial demonstrates the following skills.</p>
 <ul>
-<li>kplr = Kepler </li>
-<li>008957091 = Kepler ID number</li>
-<li>2012277125453 = year 2012, day 277, time 12:54:53</li>
-<li>lpd-targ = long cadence target pixel file</li>
+<li>Astroquery Catalog Cone Search</li>
+<li>Filtering the Resulting Table</li>
+<li>Finding the TIC ID that is closest to the requested star</li>
 </ul>
-<p><strong>Defining some terms:</strong></p>
-<ul>
-<li><strong>Cadence:</strong> the frequency with which summed data are read out. Files are either short cadence (a 1 minute sum) or long cadence (a 30 minute sum). The data we are using here is a long cadence file. </li>
-<li><strong>HDU:</strong> Header Data Unit; a FITS file is made up of Header or Data units that contain information, data, and metadata relating to the file. The first HDU is called the primary, and anything that follows is considered an extension.  </li>
-</ul>
-<p>For more information about the Kepler mission and collected data, visit the <a href="https://archive.stsci.edu/kepler/">Kepler archive page</a>. To read more details about Target Pixel Files and relevant data terms, look in the <a href="https://archive.stsci.edu/kepler/manuals/archive_manual.pdf#page=22">Kepler archive manual</a>.</p>
 
 </div>
 </div>
@@ -13164,30 +13134,7 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="imports_ID"></a></p>
-<h2 id="Imports">Imports<a class="anchor-link" href="#Imports">&#182;</a></h2><p>Let's start by importing some libraries to the environment:</p>
-<ul>
-<li><em>numpy</em> to handle array functions</li>
-<li><em>astropy.io fits</em> for accessing FITS files</li>
-<li><em>astropy.table Table</em> for creating tidy tables of the data</li>
-<li><em>matplotlib.pyplot</em> for plotting data</li>
-</ul>
+<h1 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h1><p>We start by importing the required python modules and setting variables with the star name and radius of our query in degrees.</p>
 
 </div>
 </div>
@@ -13197,11 +13144,10 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">astroquery.mast</span> <span class="k">import</span> <span class="n">Catalogs</span>
+
+<span class="n">star_name</span> <span class="o">=</span> <span class="s2">&quot;HD 209458&quot;</span>
+<span class="n">radius_deg</span> <span class="o">=</span> <span class="o">.</span><span class="mi">2</span>
 </pre></div>
 
     </div>
@@ -13212,24 +13158,7 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="data_ID"></a></p>
-<h2 id="Getting-the-Data">Getting the Data<a class="anchor-link" href="#Getting-the-Data">&#182;</a></h2><p>Start by importing libraries from Astroquery. For a longer, more detailed description using of Astroquery, please visit this <a href="https://github.com/spacetelescope/MAST-API-Notebooks/blob/master/MUG2018_APITutorial_Astroquery.ipynb">tutorial</a> or read the Astroquery <a href="https://astroquery.readthedocs.io/en/latest/#">documentation</a>.</p>
+<h1 id="Astroquery-Catalog-Cone-Search">Astroquery Catalog Cone Search<a class="anchor-link" href="#Astroquery-Catalog-Cone-Search">&#182;</a></h1><p>Use the Catalogs query_object to do a cone search on the star and return the rows form the TIC catalog.  The numbers of returned rows are printed below.</p>
 
 </div>
 </div>
@@ -13239,11 +13168,30 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">astroquery.mast</span> <span class="k">import</span> <span class="n">Mast</span>
-<span class="kn">from</span> <span class="nn">astroquery.mast</span> <span class="k">import</span> <span class="n">Observations</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">catalogTIC</span> <span class="o">=</span> <span class="n">Catalogs</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="n">star_name</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius_deg</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s2">&quot;TIC&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Stars in the TIC within </span><span class="si">%f</span><span class="s2"> deg of </span><span class="si">%s</span><span class="s2">: </span><span class="si">%u</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">radius_deg</span><span class="p">,</span> <span class="n">star_name</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">catalogTIC</span><span class="p">)))</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of Stars in the TIC within 0.200000 deg of HD 209458: 595
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13251,7 +13199,7 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><br>Next, we need to find the data file. This is similar to searching for the data using the <a href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a> in that we will be using certain keywords to find the file. The object we are looking for is kplr008957091, collected by the Kepler spacecraft. We are also looking for a long cadence timeseries file.</p>
+<h1 id="Select-Dwarf-Stars">Select Dwarf Stars<a class="anchor-link" href="#Select-Dwarf-Stars">&#182;</a></h1><p>Make a cut on the resulting table for those with a luminosity class of 'DWARF'.  We will do this by creating a python list of True/False indicating when the luminosity class column is set to DWARF. We then print out the number of dwarf stars in our table and print out the first 12 rows of the table.</p>
 
 </div>
 </div>
@@ -13261,11 +13209,10 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">keplerObs</span> <span class="o">=</span> <span class="n">Observations</span><span class="o">.</span><span class="n">query_criteria</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;kplr008957091&#39;</span><span class="p">,</span> <span class="n">obs_collection</span><span class="o">=</span><span class="s1">&#39;Kepler&#39;</span><span class="p">)</span>
-<span class="n">keplerProds</span> <span class="o">=</span> <span class="n">Observations</span><span class="o">.</span><span class="n">get_product_list</span><span class="p">(</span><span class="n">keplerObs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">yourProd</span> <span class="o">=</span> <span class="n">Observations</span><span class="o">.</span><span class="n">filter_products</span><span class="p">(</span><span class="n">keplerProds</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s1">&#39;kplr008957091-2012277125453_lpd-targ.fits.gz&#39;</span><span class="p">,</span>
-                                        <span class="n">mrp_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">yourProd</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dwarfs</span><span class="o">=</span><span class="n">catalogTIC</span><span class="p">[</span><span class="s1">&#39;lumclass&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;DWARF&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Dwarf stars within </span><span class="si">%f</span><span class="s2"> deg of </span><span class="si">%s</span><span class="s2">: </span><span class="si">%u</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">radius_deg</span><span class="p">,</span> <span class="n">star_name</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">catalogTIC</span><span class="p">[</span><span class="n">dwarfs</span><span class="p">])))</span>
+<span class="n">catalogTIC_dwarf</span><span class="o">=</span><span class="n">catalogTIC</span><span class="p">[</span><span class="n">dwarfs</span><span class="p">]</span>
+<span class="n">catalogTIC_dwarf</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13278,16 +13225,38 @@ The pixels used to create data in the light curve files are contained within a p
 
 <div class="output_area">
 
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of Dwarf stars within 0.200000 deg of HD 209458: 476
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
     <div class="prompt output_prompt">Out[3]:</div>
 
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-<i>Table masked=True length=1</i>
-<table id="table140338852096656" class="table-striped table-bordered table-condensed">
-<thead><tr><th>obsID</th><th>obs_collection</th><th>dataproduct_type</th><th>obs_id</th><th>description</th><th>type</th><th>dataURI</th><th>productType</th><th>productGroupDescription</th><th>productSubGroupDescription</th><th>productDocumentationURL</th><th>project</th><th>prvversion</th><th>proposal_id</th><th>productFilename</th><th>size</th><th>parent_obsid</th></tr></thead>
-<thead><tr><th>str10</th><th>str6</th><th>str10</th><th>str36</th><th>str59</th><th>str1</th><th>str110</th><th>str7</th><th>str28</th><th>str1</th><th>str1</th><th>str6</th><th>str1</th><th>str7</th><th>str44</th><th>int64</th><th>str10</th></tr></thead>
-<tr><td>9000159893</td><td>Kepler</td><td>timeseries</td><td>kplr008957091_lc_Q000000000011111111</td><td>Target Pixel Long Cadence (TPL) - Q14</td><td>C</td><td>mast:Kepler/url/missions/kepler/target_pixel_files/0089/008957091/kplr008957091-2012277125453_lpd-targ.fits.gz</td><td>SCIENCE</td><td>--</td><td>--</td><td>--</td><td>Kepler</td><td>--</td><td>GO30032</td><td>kplr008957091-2012277125453_lpd-targ.fits.gz</td><td>4365449</td><td>9000159893</td></tr>
+<i>Table masked=True length=12</i>
+<table id="table140318487500784" class="table-striped table-bordered table-condensed">
+<thead><tr><th>ID</th><th>ra</th><th>dec</th><th>pmRA</th><th>pmDEC</th><th>Tmag</th><th>objType</th><th>typeSrc</th><th>version</th><th>HIP</th><th>TYC</th><th>UCAC</th><th>TWOMASS</th><th>SDSS</th><th>ALLWISE</th><th>GAIA</th><th>APASS</th><th>KIC</th><th>POSflag</th><th>e_pmRA</th><th>e_pmDEC</th><th>PMflag</th><th>plx</th><th>e_plx</th><th>PARflag</th><th>gallong</th><th>gallat</th><th>eclong</th><th>eclat</th><th>Bmag</th><th>e_Bmag</th><th>Vmag</th><th>e_Vmag</th><th>umag</th><th>e_umag</th><th>gmag</th><th>e_gmag</th><th>rmag</th><th>e_rmag</th><th>imag</th><th>e_imag</th><th>zmag</th><th>e_zmag</th><th>Jmag</th><th>e_Jmag</th><th>Hmag</th><th>e_Hmag</th><th>Kmag</th><th>e_Kmag</th><th>TWOMflag</th><th>prox</th><th>w1mag</th><th>e_w1mag</th><th>w2mag</th><th>e_w2mag</th><th>w3mag</th><th>e_w3mag</th><th>w4mag</th><th>e_w4mag</th><th>GAIAmag</th><th>e_GAIAmag</th><th>e_Tmag</th><th>TESSflag</th><th>SPFlag</th><th>Teff</th><th>e_Teff</th><th>logg</th><th>e_logg</th><th>MH</th><th>e_MH</th><th>rad</th><th>e_rad</th><th>mass</th><th>e_mass</th><th>rho</th><th>e_rho</th><th>lumclass</th><th>lum</th><th>e_lum</th><th>d</th><th>e_d</th><th>ebv</th><th>e_ebv</th><th>numcont</th><th>contratio</th><th>disposition</th><th>duplicate_id</th><th>priority</th><th>dstArcSec</th></tr></thead>
+<thead><tr><th>str11</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>str8</th><th>str5</th><th>str8</th><th>str6</th><th>str12</th><th>str10</th><th>str16</th><th>str19</th><th>str19</th><th>str19</th><th>str8</th><th>str1</th><th>str8</th><th>float64</th><th>float64</th><th>str6</th><th>float64</th><th>float64</th><th>str4</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>str19</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>str5</th><th>str5</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>str5</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>float64</th><th>int64</th><th>float64</th><th>str1</th><th>str1</th><th>float64</th><th>float64</th></tr></thead>
+<tr><td>420814525</td><td>330.794908</td><td>18.884363</td><td>29.7249</td><td>-18.0253</td><td>7.105</td><td>STAR</td><td>2mass</td><td>20180610</td><td>108859</td><td>1688-01821-1</td><td>545-143615</td><td>22031077+1853036</td><td>--</td><td>J220310.79+185303.3</td><td>1779546753373081600</td><td>44767131</td><td>--</td><td>tmgaia</td><td>0.0799488</td><td>0.0819606</td><td>tgas</td><td>20.4655</td><td>0.227021</td><td>tgas</td><td>76.753371</td><td>-28.526888</td><td>340.354153</td><td>28.724246</td><td>8.168</td><td>--</td><td>7.65</td><td>0.03</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>6.591</td><td>0.02</td><td>6.366</td><td>0.038</td><td>6.308</td><td>0.026</td><td>AAA-111-111-000-0-0</td><td>33.0</td><td>6.308</td><td>0.091</td><td>6.191</td><td>0.027</td><td>6.32</td><td>0.016</td><td>6.265</td><td>0.053</td><td>7.48352</td><td>0.000345996</td><td>0.017</td><td>gaiaj</td><td>kplnt</td><td>6052.0</td><td>25.0</td><td>0.028</td><td>--</td><td>0.05</td><td>0.1</td><td>1.12</td><td>--</td><td>1.1</td><td>--</td><td>0.782958</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>48.86272</td><td>0.898241</td><td>0.0670398</td><td>--</td><td>48</td><td>0.000936200144</td><td>--</td><td>--</td><td>0.005835094</td><td>0.17347421064139049</td></tr>
+<tr><td>372975009</td><td>330.801602</td><td>18.87028</td><td>11.5334</td><td>-8.49805</td><td>15.1</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>545-143619</td><td>22031238+1852130</td><td>1237680272035348500</td><td>J220312.40+185213.0</td><td>1779546650294354688</td><td>--</td><td>--</td><td>tmgaia</td><td>2.12941</td><td>2.12515</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.747788</td><td>-28.54153</td><td>340.354428</td><td>28.708806</td><td>18.377</td><td>0.168</td><td>16.283</td><td>0.309</td><td>20.156</td><td>0.0651094</td><td>17.3566</td><td>0.00476957</td><td>16.0749</td><td>0.00398775</td><td>15.4878</td><td>0.00374771</td><td>15.1356</td><td>0.00534862</td><td>14.056</td><td>0.03</td><td>13.347</td><td>0.035</td><td>13.214</td><td>0.037</td><td>AAA-222-111-000-0-0</td><td>13.0</td><td>13.022</td><td>0.025</td><td>13.102</td><td>0.027</td><td>12.361</td><td>0.404</td><td>8.494</td><td>--</td><td>15.8625</td><td>0.00255367</td><td>0.019</td><td>gaiaj</td><td>--</td><td>4228.0</td><td>172.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>55.474997200722065</td></tr>
+<tr><td>420814540</td><td>330.792809</td><td>18.900773</td><td>-1.81429</td><td>-3.14773</td><td>17.442</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22031027+1854027</td><td>1237680272035348512</td><td>--</td><td>1779547509288020608</td><td>--</td><td>--</td><td>tmgaia</td><td>2.28658</td><td>2.29069</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.764385</td><td>-28.513488</td><td>340.359484</td><td>28.740101</td><td>18.443</td><td>0.193</td><td>--</td><td>--</td><td>19.8029</td><td>0.0505438</td><td>18.6118</td><td>0.00819841</td><td>18.0839</td><td>0.00752616</td><td>17.8866</td><td>0.00838898</td><td>17.7048</td><td>0.0220093</td><td>16.744</td><td>0.179</td><td>16.326</td><td>0.284</td><td>15.899</td><td>0.285</td><td>CDD-222-111-ccc-0-0</td><td>28.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>17.9595</td><td>0.0119399</td><td>0.079</td><td>gaiaj</td><td>--</td><td>4880.0</td><td>179.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>59.6560326661506</td></tr>
+<tr><td>372975012</td><td>330.799348</td><td>18.867369</td><td>18.6826</td><td>-2.67202</td><td>16.694</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22031184+1852025</td><td>1237680272035348508</td><td>J220311.85+185202.8</td><td>1779546650294348416</td><td>--</td><td>--</td><td>tmgaia</td><td>2.71913</td><td>2.72841</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.743756</td><td>-28.54222</td><td>340.350881</td><td>28.706978</td><td>--</td><td>--</td><td>--</td><td>--</td><td>30.0</td><td>50.0</td><td>19.6237</td><td>0.0146998</td><td>18.1859</td><td>0.00799489</td><td>17.0963</td><td>0.0057127</td><td>16.5152</td><td>0.0101429</td><td>15.435</td><td>0.055</td><td>14.626</td><td>0.056</td><td>14.278</td><td>0.081</td><td>AAA-222-111-c00-0-0</td><td>13.0</td><td>14.281</td><td>0.054</td><td>14.32</td><td>0.068</td><td>12.353</td><td>--</td><td>8.947</td><td>--</td><td>17.5982</td><td>0.00889086</td><td>0.028</td><td>gaiaj</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>62.883267908729586</td></tr>
+<tr><td>372974996</td><td>330.810838</td><td>18.893276</td><td>-1.913</td><td>1.91505</td><td>17.225</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22031460+1853357</td><td>1237680272035348511</td><td>J220314.60+185336.1</td><td>1779546856452803456</td><td>--</td><td>--</td><td>tmgaia</td><td>2.25609</td><td>2.26099</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.772856</td><td>-28.530568</td><td>340.37396</td><td>28.726462</td><td>19.772</td><td>0.123</td><td>--</td><td>--</td><td>22.2619</td><td>0.375424</td><td>19.411</td><td>0.012769</td><td>18.1489</td><td>0.00774171</td><td>17.6807</td><td>0.00743784</td><td>17.386</td><td>0.0175271</td><td>16.133</td><td>0.106</td><td>15.756</td><td>0.153</td><td>15.238</td><td>--</td><td>ACU-220-110-c00-0-0</td><td>30.6</td><td>15.351</td><td>0.036</td><td>15.799</td><td>0.124</td><td>12.51</td><td>--</td><td>9.139</td><td>--</td><td>18.0203</td><td>0.0125587</td><td>0.047</td><td>gaiaj</td><td>--</td><td>4032.0</td><td>170.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>63.17852638525095</td></tr>
+<tr><td>420814536</td><td>330.782668</td><td>18.898377</td><td>2.59596</td><td>-11.5119</td><td>14.645</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>545-143611</td><td>22030784+1853541</td><td>1237680272035283152</td><td>J220307.83+185353.9</td><td>1779547509287839616</td><td>44767056</td><td>--</td><td>tmgaia</td><td>2.13402</td><td>2.1338</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.754516</td><td>-28.508736</td><td>340.348354</td><td>28.7417</td><td>15.853</td><td>--</td><td>15.258</td><td>0.126</td><td>16.8294</td><td>0.00837501</td><td>15.5539</td><td>0.00316212</td><td>15.0963</td><td>0.003524</td><td>14.9317</td><td>0.00351899</td><td>14.8591</td><td>0.0048171</td><td>14.106</td><td>0.029</td><td>13.653</td><td>0.04</td><td>13.683</td><td>0.042</td><td>AAA-222-111-000-0-0</td><td>35.6</td><td>13.552</td><td>0.026</td><td>13.618</td><td>0.032</td><td>12.406</td><td>--</td><td>8.552</td><td>--</td><td>15.0436</td><td>0.00157175</td><td>0.02</td><td>gaiaj</td><td>--</td><td>5640.0</td><td>188.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>65.52476090592101</td></tr>
+<tr><td>420814527</td><td>330.774816</td><td>18.889402</td><td>-2.77517</td><td>-14.6866</td><td>15.682</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>545-143608</td><td>22030595+1853218</td><td>1237680272035283156</td><td>J220305.95+185321.8</td><td>1779547474928281472</td><td>44767025</td><td>--</td><td>tmgaia</td><td>2.17832</td><td>2.1888</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.741375</td><td>-28.510284</td><td>340.33652</td><td>28.7364</td><td>17.356</td><td>0.085</td><td>16.38</td><td>0.218</td><td>18.47</td><td>0.0200953</td><td>16.9156</td><td>0.00410957</td><td>16.2546</td><td>0.00408557</td><td>16.0121</td><td>0.00409468</td><td>15.8905</td><td>0.00714828</td><td>14.996</td><td>0.056</td><td>14.543</td><td>0.059</td><td>14.428</td><td>0.086</td><td>AAA-222-111-000-0-0</td><td>41.9</td><td>14.332</td><td>0.029</td><td>14.334</td><td>0.044</td><td>12.588</td><td>--</td><td>8.866</td><td>--</td><td>16.1907</td><td>0.00315714</td><td>0.028</td><td>gaiaj</td><td>--</td><td>5184.0</td><td>182.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>70.77304214800095</td></tr>
+<tr><td>420814514</td><td>330.788951</td><td>18.863013</td><td>-7.72679</td><td>-16.326</td><td>17.039</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22030934+1851468</td><td>1237680272035283163</td><td>--</td><td>1779540774779084672</td><td>--</td><td>--</td><td>tmgaia</td><td>2.21045</td><td>2.19217</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.732165</td><td>-28.53874</td><td>340.338613</td><td>28.706873</td><td>20.302</td><td>0.185</td><td>--</td><td>--</td><td>22.5027</td><td>0.453994</td><td>19.8365</td><td>0.0167403</td><td>18.2671</td><td>0.00833047</td><td>17.5229</td><td>0.00697834</td><td>17.0866</td><td>0.0142629</td><td>15.806</td><td>0.082</td><td>15.001</td><td>0.077</td><td>14.813</td><td>0.1</td><td>AAA-222-111-000-0-0</td><td>29.6</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>17.9266</td><td>0.011619</td><td>0.038</td><td>gaiaj</td><td>--</td><td>3648.0</td><td>167.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>79.32233791742141</td></tr>
+<tr><td>372975015</td><td>330.801432</td><td>18.862127</td><td>-2.57989</td><td>2.73142</td><td>13.323</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>545-143618</td><td>22031234+1851436</td><td>1237680272035348494</td><td>J220312.34+185143.6</td><td>1779546650293867776</td><td>44767174</td><td>--</td><td>tmgaia</td><td>2.13664</td><td>2.12713</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.741354</td><td>-28.547409</td><td>340.350579</td><td>28.701383</td><td>14.749</td><td>0.023</td><td>13.963</td><td>0.137</td><td>15.8469</td><td>0.00568974</td><td>14.341</td><td>0.002974</td><td>14.2342</td><td>0.0107239</td><td>13.6586</td><td>0.00332788</td><td>13.5967</td><td>0.00395829</td><td>12.743</td><td>0.026</td><td>12.383</td><td>0.029</td><td>12.347</td><td>0.026</td><td>AAA-222-111-000-0-0</td><td>20.2</td><td>12.274</td><td>0.024</td><td>12.37</td><td>0.025</td><td>12.386</td><td>--</td><td>8.939</td><td>--</td><td>13.753</td><td>0.000800193</td><td>0.019</td><td>gaiaj</td><td>splin</td><td>5513.0</td><td>186.0</td><td>4.39676</td><td>--</td><td>--</td><td>--</td><td>1.03221</td><td>1.03221</td><td>0.9679852</td><td>0.123649</td><td>0.880175</td><td>0.880175</td><td>DWARF</td><td>0.8867066</td><td>0.8867066</td><td>635.07</td><td>--</td><td>0.0669953</td><td>--</td><td>126</td><td>--</td><td>--</td><td>--</td><td>--</td><td>82.94340161913217</td></tr>
+<tr><td>372975011</td><td>330.814682</td><td>18.86818</td><td>10.2428</td><td>7.90956</td><td>17.646</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22031552+1852054</td><td>1237680272035348517</td><td>J220315.56+185205.7</td><td>1779546478495660032</td><td>--</td><td>--</td><td>tmgaia</td><td>2.26877</td><td>2.27298</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.756514</td><td>-28.551471</td><td>340.366437</td><td>28.701978</td><td>20.189</td><td>0.149</td><td>--</td><td>--</td><td>24.6297</td><td>3.19919</td><td>20.1017</td><td>0.0202015</td><td>18.6962</td><td>0.0104803</td><td>18.054</td><td>0.00915228</td><td>17.6978</td><td>0.0221466</td><td>16.446</td><td>0.135</td><td>15.738</td><td>0.154</td><td>15.338</td><td>--</td><td>BBU-220-110-c00-0-0</td><td>18.7</td><td>15.572</td><td>0.043</td><td>15.955</td><td>0.155</td><td>12.448</td><td>--</td><td>9.136</td><td>--</td><td>18.5119</td><td>0.0190531</td><td>0.059</td><td>gaiaj</td><td>--</td><td>3794.0</td><td>168.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>89.0068831239976</td></tr>
+<tr><td>372974984</td><td>330.80691</td><td>18.90947</td><td>-12.9495</td><td>-0.618908</td><td>16.676</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>--</td><td>--</td><td>22031365+1854340</td><td>1237680272035348507</td><td>J220313.70+185433.8</td><td>1779547612367066240</td><td>--</td><td>--</td><td>tmgaia</td><td>2.18241</td><td>2.18947</td><td>hsoy</td><td>--</td><td>--</td><td>--</td><td>76.782254</td><td>-28.51615</td><td>340.377382</td><td>28.742804</td><td>19.177</td><td>0.097</td><td>--</td><td>--</td><td>21.976</td><td>0.293689</td><td>19.1818</td><td>0.0113534</td><td>17.7819</td><td>0.00659934</td><td>17.1166</td><td>0.00588061</td><td>16.6912</td><td>0.0113177</td><td>15.509</td><td>0.076</td><td>15.014</td><td>0.087</td><td>14.612</td><td>0.108</td><td>AAA-222-111-000-0-0</td><td>41.0</td><td>14.19</td><td>0.027</td><td>14.18</td><td>0.043</td><td>12.512</td><td>--</td><td>9.005</td><td>--</td><td>17.5209</td><td>0.00835862</td><td>0.035</td><td>gaiaj</td><td>--</td><td>4020.0</td><td>170.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>DWARF</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>99.372926967848</td></tr>
+<tr><td>420814510</td><td>330.781065</td><td>18.859539</td><td>-10.8</td><td>-9.8</td><td>10.692</td><td>STAR</td><td>2mass</td><td>20180610</td><td>--</td><td>1688-01903-1</td><td>545-143610</td><td>22030745+1851343</td><td>1237680272035283149</td><td>J220307.44+185134.1</td><td>1779540774778606976</td><td>44767053</td><td>--</td><td>tmgaia</td><td>1.6</td><td>1.7</td><td>tycho2</td><td>--</td><td>--</td><td>--</td><td>76.723243</td><td>-28.536226</td><td>340.329233</td><td>28.706636</td><td>11.634</td><td>0.223</td><td>11.301</td><td>0.016</td><td>14.3481</td><td>0.00622708</td><td>13.5767</td><td>0.00769571</td><td>8.24238</td><td>7.98801e-05</td><td>13.0644</td><td>0.00912818</td><td>13.0657</td><td>0.0149484</td><td>10.222</td><td>0.026</td><td>9.991</td><td>0.032</td><td>9.912</td><td>0.018</td><td>AAA-222-111-000-0-0</td><td>19.7</td><td>9.905</td><td>0.024</td><td>9.931</td><td>0.021</td><td>9.873</td><td>0.05</td><td>8.713</td><td>0.441</td><td>11.0376</td><td>0.000345996</td><td>0.019</td><td>gaiaj</td><td>splin</td><td>6186.0</td><td>194.0</td><td>4.272</td><td>2.00583</td><td>--</td><td>--</td><td>1.31785</td><td>1.31785</td><td>1.1838783</td><td>0.180922</td><td>0.517258</td><td>1.55177</td><td>DWARF</td><td>2.29122519</td><td>2.29122519</td><td>299.881</td><td>--</td><td>0.0674319</td><td>--</td><td>46</td><td>0.212469682</td><td>--</td><td>--</td><td>0.000856998959</td><td>100.87161447817448</td></tr>
 </table>
 </div>
 
@@ -13300,7 +13269,7 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><br>Now that we've found the data file, we can download it using the reults shown in the table above:</p>
+<h1 id="Get-Closest-TIC-ID">Get Closest TIC ID<a class="anchor-link" href="#Get-Closest-TIC-ID">&#182;</a></h1><p>Retrieve the star in the TESS Input Catalog that is closest to the requested position. The table produced by the astroquery request is sorted by the column "dstArcSec".  This column gives the distance in arc seconds from the requested position and is added by the MAST at the time of the request.</p>
 
 </div>
 </div>
@@ -13310,7 +13279,11 @@ The pixels used to create data in the light curve files are contained within a p
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Observations</span><span class="o">.</span><span class="n">download_products</span><span class="p">(</span><span class="n">yourProd</span><span class="p">,</span> <span class="n">mrp_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ticID</span> <span class="o">=</span> <span class="n">catalogTIC</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+<span class="n">pos</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2"> </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">catalogTIC</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span><span class="n">catalogTIC</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dec&quot;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TIC ID of </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span> <span class="p">(</span><span class="n">star_name</span><span class="p">,</span><span class="n">ticID</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RA and Dec: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pos</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13327,85 +13300,8 @@ The pixels used to create data in the light curve files are contained within a p
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Downloading URL https://mast.stsci.edu/api/v0/download/file?uri=mast:Kepler/url/missions/kepler/target_pixel_files/0089/008957091/kplr008957091-2012277125453_lpd-targ.fits.gz to ./mastDownload/Kepler/kplr008957091_lc_Q000000000011111111/kplr008957091-2012277125453_lpd-targ.fits.gz ... [Done]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[4]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<i>Table length=1</i>
-<table id="table140338845200056" class="table-striped table-bordered table-condensed">
-<thead><tr><th>Local Path</th><th>Status</th><th>Message</th><th>URL</th></tr></thead>
-<thead><tr><th>str103</th><th>str8</th><th>object</th><th>object</th></tr></thead>
-<tr><td>./mastDownload/Kepler/kplr008957091_lc_Q000000000011111111/kplr008957091-2012277125453_lpd-targ.fits.gz</td><td>COMPLETE</td><td>None</td><td>None</td></tr>
-</table>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="extension_ID"></a></p>
-<h2 id="Reading-FITS-Extensions">Reading FITS Extensions<a class="anchor-link" href="#Reading-FITS-Extensions">&#182;</a></h2><p><br>Now that we have the file, we can start working with the data. We will begin by assigning a shorter name to the file to make it easier to use. Then, using the info function from astropy.io.fits, we can see some information about the FITS Header Data Units:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./mastDownload/Kepler/kplr008957091_lc_Q000000000011111111/kplr008957091-2012277125453_lpd-targ.fits.gz&quot;</span>
-<span class="n">fits</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Filename: ./mastDownload/Kepler/kplr008957091_lc_Q000000000011111111/kplr008957091-2012277125453_lpd-targ.fits.gz
-No.    Name      Ver    Type      Cards   Dimensions   Format
-  0  PRIMARY       1 PrimaryHDU      58   ()      
-  1  TARGETTABLES    1 BinTableHDU    287   4757R x 13C   [D, E, J, 64J, 64E, 64E, 64E, 64E, 64E, J, E, E, 40E]   
-  2  APERTURE      1 ImageHDU        48   (8, 8)   int32   
+<pre>TIC ID of HD 209458: 420814525
+RA and Dec: 330.794908 18.884363
 </pre>
 </div>
 </div>
@@ -13414,688 +13310,18 @@ No.    Name      Ver    Type      Cards   Dimensions   Format
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><strong>No. 0 (Primary): </strong>
-<br>This HDU contains meta-data related to the entire file.</li>
-<li><strong>No. 1 (Targettables): </strong>
-<br>This HDU contains a binary table that has 13 columns containing a series of either scalar values or images. We will be taking some of the images from the table and plotting them in this tutorial.</li>
-<li><strong>No. 2 (Aperture): </strong>
-<br>This HDU contains the image extension with data collected from the aperture. We will also use this to display a bitmask plot that visually represents the optimal aperture used to create the SAP_FLUX column in the light curve data.</li>
-</ul>
-<p>For more detailed information about header extensions, look <a href="https://archive.stsci.edu/kepler/manuals/archive_manual.pdf#page=22">here</a>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>Let's say we wanted to see more information about the extensions than what the fits.info command gave us. For example, we can access information stored in the header of the Binary Table extension (No.1, TARGETTABLES). The following line opens the FITS file, writes the first HDU extension into header1, and then closes the file. Only 24 columns are displayed here but you can view them all by adjusting the range:</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdulist</span><span class="p">:</span> 
-    <span class="n">header1</span> <span class="o">=</span> <span class="n">hdulist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-  
-<span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">header1</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">25</span><span class="p">]))</span> <span class="c1">#repr() prints the info into neat columns</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>BITPIX  =                    8 / array data type                                
-NAXIS   =                    2 / number of array dimensions                     
-NAXIS1  =                 1724 / length of first array dimension                
-NAXIS2  =                 4757 / length of second array dimension               
-PCOUNT  =                    0 / group parameter count (not used)               
-GCOUNT  =                    1 / group count (not used)                         
-TFIELDS =                   13 / number of table fields                         
-TTYPE1  = &#39;TIME    &#39;           / column title: data time stamps                 
-TFORM1  = &#39;D       &#39;           / column format: 64-bit floating point           
-TUNIT1  = &#39;BJD - 2454833&#39;      / column units: barycenter corrected JD          
-TDISP1  = &#39;D14.7   &#39;           / column display format                          
-TTYPE2  = &#39;TIMECORR&#39;           / column title: barycenter - timeslice correction
-TFORM2  = &#39;E       &#39;           / column format: 32-bit floating point           
-TUNIT2  = &#39;d       &#39;           / column units: day                              
-TDISP2  = &#39;E14.7   &#39;           / column display format                          
-TTYPE3  = &#39;CADENCENO&#39;          / column title: unique cadence number            
-TFORM3  = &#39;J       &#39;           / column format: signed 32-bit integer           
-TDISP3  = &#39;I10     &#39;           / column display format                          
-TTYPE4  = &#39;RAW_CNTS&#39;           / column title: raw pixel counts                 
-TFORM4  = &#39;64J     &#39;           / column format: image of signed 32-bit integers 
-TUNIT4  = &#39;count   &#39;           / column units: count                            
-TDISP4  = &#39;I8      &#39;           / column display format                          
-TDIM4   = &#39;(8,8)   &#39;           / column dimensions: pixel aperture array        
-TNULL4  =                   -1 / column null value indicator                    
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br> We can also view a table of the data from the Binary Table extension. This is where we can find the flux and time columns to be plotted later. Here only the first four rows of the table are displayed:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdulist</span><span class="p">:</span>
-    <span class="n">binaryext</span> <span class="o">=</span> <span class="n">hdulist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-
-<span class="n">binarytab</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">binaryext</span><span class="p">)</span>
-<span class="n">binarytab</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<i>Table length=4</i>
-<table id="table140338844370480" class="table-striped table-bordered table-condensed">
-<thead><tr><th>TIME</th><th>TIMECORR</th><th>CADENCENO</th><th>RAW_CNTS [8,8]</th><th>FLUX [8,8]</th><th>FLUX_ERR [8,8]</th><th>FLUX_BKG [8,8]</th><th>FLUX_BKG_ERR [8,8]</th><th>COSMIC_RAYS [8,8]</th><th>QUALITY</th><th>POS_CORR1</th><th>POS_CORR2</th><th>RB_LEVEL [8,5]</th></tr></thead>
-<thead><tr><th>float64</th><th>float32</th><th>int32</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
-<tr><td>1274.1395732864694</td><td>0.0022160665</td><td>57024</td><td>422568 .. 421938</td><td>41.62306 .. 0.49973154</td><td>1.0728891 .. 1.077012</td><td>166.55408 .. 166.43286</td><td>0.05004611 .. 0.05002594</td><td>nan .. nan</td><td>0</td><td>0.018315108</td><td>-0.052525554</td><td>0.16289888 .. 0.22096205</td></tr>
-<tr><td>1274.1600076621398</td><td>0.0022167421</td><td>57025</td><td>422568 .. 421938</td><td>41.12269 .. 0.40782627</td><td>1.0728829 .. 1.0770054</td><td>166.5374 .. 166.41513</td><td>0.05014606 .. 0.050128847</td><td>nan .. nan</td><td>0</td><td>0.018484294</td><td>-0.052207224</td><td>0.19264737 .. 0.28943384</td></tr>
-<tr><td>1274.1804419378168</td><td>0.0022174178</td><td>57026</td><td>422598 .. 421938</td><td>43.76557 .. 0.18402159</td><td>1.0735049 .. 1.0770029</td><td>166.44955 .. 166.32483</td><td>0.05003051 .. 0.05001035</td><td>nan .. nan</td><td>0</td><td>0.019123403</td><td>-0.052663438</td><td>0.27529782 .. 0.28463778</td></tr>
-<tr><td>1274.2008761132602</td><td>0.0022180933</td><td>57027</td><td>422588 .. 421938</td><td>42.315395 .. 0.26509726</td><td>1.073293 .. 1.076999</td><td>166.54523 .. 166.4112</td><td>0.05008907 .. 0.05007079</td><td>nan .. nan</td><td>0</td><td>0.018382369</td><td>-0.052379206</td><td>0.2684216 .. 0.297417</td></tr>
-</table>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>Some of the columns (RAW_CNTS through COSMIC_RAYS) are 8x8 arrays. These are the pixels used for light curve data packaged as images into the Binary Table. Each of these arrays is an image taken at a certain time as seen in the TIME column. To find out how many times there are, we can run the following code to get the vertical length of the entire table:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>4757
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="images_ID"></a></p>
-<h2 id="Plotting-the-Images">Plotting the Images<a class="anchor-link" href="#Plotting-the-Images">&#182;</a></h2><p>To better understand the arrays in the table, we can single out one cell and display its data. For example, let's read the cell in Row 0, column FLUX. This is the flux data collected at time 1274.1395732864694.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[9]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([[ 4.1623058e+01,  1.7780533e+01,  3.1153817e+00, -3.0876877e+00,
-         8.3767604e-03, -1.0850269e+00, -8.1516063e-01, -2.5957384e+00],
-       [ 3.0861683e+01,  1.0227163e+01,  5.5491271e+00,  7.6004462e+00,
-         3.4271725e+01,  6.9740272e+00,  1.0782831e+00,  7.1954594e+00],
-       [-1.4854238e+00,  5.4094785e-01,  3.5754349e+00,  1.8321907e+01,
-         5.8315243e+01,  1.7005610e+01,  1.4785897e+00,  2.1474166e-01],
-       [-2.9369431e+00, -3.0120549e-01,  1.9583700e+01,  1.2907016e+02,
-         2.6917322e+02,  7.8723610e+01,  1.8297552e+01,  6.7504066e+01],
-       [-5.1648269e+00,  6.6967867e-02,  2.4730293e+01,  1.8597522e+02,
-         3.9219736e+02,  9.2981400e+01,  1.8644941e+01,  1.4952176e+02],
-       [ 2.4195774e-01, -2.2746756e+00, -7.2001988e-01,  6.1791143e+00,
-         1.6116604e+01,  1.0269024e+01,  3.5868566e+00,  1.2844697e+00],
-       [ 2.1793385e+00, -2.0849459e+00, -2.2841897e+00, -2.2008568e-01,
-         5.5619407e+00,  1.3116534e+01,  1.8261925e+00, -2.2240562e+00],
-       [-2.1672373e+00, -4.2338033e+00, -2.9555788e+00, -9.1262859e-01,
-         8.5611248e+00,  2.2380089e+01,  2.7300879e+01,  4.9973154e-01]],
-      dtype=float32)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>
-<br>We can then plot this array as an image, where each pixel is shown as a color value from the above array:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Flux Row 0&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Column&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Row&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">clim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAEWCAYAAADy2YssAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMi4yLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvhp/UCwAAGytJREFUeJzt3X20HVWd5vHvk5CEd8ObGCFO0I4sUYdgR6QXrY1i26A0wR4ZYUZFh+44I7pktdMOuqaXtqtdY7/4urSZvg20qAhNI7Q0TaO8CMgsBQNGIQQkAsqVQIyGd8jLvc/8UXXxGG/urXNzqs45dZ+Pq9atqlOnfvuS+MvetWvvLdtERLTRnH4XICKiLklwEdFaSXAR0VpJcBHRWklwEdFaSXAR0VpJcC0laYkkS9ql32WJ6JckuCEn6X5JT0t6omN7fo3xJhLnRKz7JZ1VV7yOuPtKukzSk5J+Ium/1B0zhl/+dW+HP7R9TecJSUtqjrnQ9jZJy4EbJN1q++oa430B2AIcCCwD/k3SD2yvqTFmDLnU4GaJsqb1+o7jj0r6Srn/Vkn3Stq7PD5e0kOSDpjuvrZXAWsoks7EvV8i6XpJj0haI+nE8vwh5bk55fE5kjZ0fO8rks6cpOx7AP8J+HPbT9i+CbgcePvM/mvEbJEEF9j+J+A7wOck7QecC/yx7Z9P911JRwEvA9aVx/OAfwW+CTwXeB9wgaRDbd8HPAYcUX791cATkl5SHr8GuGGSMC8Gxmz/qOPcD4CXdvWLxqyTBNcO/1LWjB6R9C8zvMcZwOuA64F/tX3FNNdvlPQ0RWL8O2Ai7lHAnsAnbG+xfR1wBXBq+fkNwO9Jel55fEl5fAiwN0Xi2t6ewKPbnXsU2Kvi7xazVJ7BtcNJ2z+D65btRyT9M/CnFM3B6ewPGDiTInnNo3hG9nzgAdvjHdf+BDio3L8BOBEYBW6kSKhvB54Bvr3d9yY8QZH8Ou0NPF6hnDGLpQY3ezwJ7N5x/LzODyUtA/4bcCHwuSo3tD1m+5MUyek95ekHgcUTz9lKLwB+Vu7fQNE0Pabcvwk4Gvg9Jm+eAvwI2EXS0o5zh1M8+4vYoSS42WM1cIqkeWXP51smPpC0K/AV4MPAu4CDJL1n8ttM6hPAB8v73EyRTD9YxjoG+EPgIgDb9wBPA28DbrT9GPAwRa1x0gRn+0ngUuBjkvaQdDSwAvhyF2WMWSgJbvb4c+BFwCbgL4Cvdnz2f4BR22fb3kyRfP5yuxrTVP6tvO+f2N5C0QQ9HthI8XzuHbbv6rj+BuAXtn/acSzg+1PEeA+wG7CBopb5P/KKSExHmfAyItoqNbiIaK0kuIjoC0m7SrpF0g/KF8L/ojx/iKSbJd0j6Z8kzS/PLyiP15WfL5kuRhJcRPTLZuB1tg+nGAlzXPni+F8Bn7a9lOLZ7unl9acDm2z/FvDp8ropJcFFRF+48ER5OK/cTPHC+SXl+fOBk8r9FeUx5efHStJUMQbqRd+58/b0vAX7NRJrbNvmRuIAjHlrY7EASMdR7IDHnsRjm6dMCtM57rhXe+PGTZWuvfXWNWso3pOcMGJ7ZOJA0lzgVuC3KCZU+DHwiO1t5SWj/Ool8YOABwDKiR4eBfaj6K2f1EAluHkL9mPxy/9XI7Ee3XRfI3EAnnh6fWOxAOyxRuPF8Nj80Dd2+h4bN25i1apLK10rHfqM7eU7+tzFX9ZlkhYClwEvmeyyidtN8dmk0kSNiK654v8q389+hGLY3lHAwo6JWg+mGB0DRW1uMUD5+XOAX0513yS4iOiaPVZpm4qkA8qaG5J2A14PrAW+xa9G2pwGfL3cv7w8pvz8Ok/zIu9ANVEjYhiYaVqGVS0Czi+fw80BLrZ9haQ7gYsk/SXF6JZzy+vPBb4saR1Fze2U6QIkwUVE17ppfu7wHvYP+dXcgJ3n7wWOnOT8M8DJ3cRIgouIGZhsVqvBkwQXEV0xMCxj2JPgIqJL3fWQ9lMSXER0zQzHu5ZJcBExA8NRg6v1PThJx0m6uxz9X/viwBHRBGNX2/qttgRXvtvyBYqZXQ8DTpV0WF3xIqJJrrj1V501uCOBdbbvLaexvohiNoCIGHJmvNLWb3U+g3t25H9pFHjV9hdJWgmsBNhl/r41FicieqFofvY/eVVRZw2u0sh/2yO2l9tePnfenjUWJyJ6pdeD7etSZw3u2ZH/pc5ZASJiqKUG9z1gaTm/+nyKgbGX1xgvIhoy62tw5Yyb7wW+AcwFzss6lhFtMBg9pFXU+qKv7SuBK+uMERHNG4R33KrISIaI6FqGakVEKw3K87UqkuAiYgaS4CKipYblRd8kuIiYgdTgIqKVPBDjTKtIgouIrqWJOgMeH2Pr0483EmvL1mbiAMxRs/+Z58zdtbFYByx8aWOxNmy6vbFY28aebiwWwLxd9mgkzhbN3el7FK/5pokaEa2UkQwR0WJDMpAhCS4iujccT+CS4CKiSzaMpwYXEW01JPmt3lW1IqKNhF1tm/Iu0mJJ35K0VtIaSe8vz39U0s8krS63N3Z850PlKn13S/qD6UqaGlxEdK1HNbhtwAds3yZpL+BWSVeXn33a9t92XlyuyncK8FLg+cA1kl5se4dTm6QGFxFdMcUzuCrblPex19u+rdx/HFhLsVjVjqwALrK92fZ9wDqK1ft2KAkuIrrW61VRJS0BjgBuLk+9V9IPJZ0naZ/y3GQr9U2VEJPgIqJ7XdTg9pe0qmNbuf29JO0JfA040/ZjwNnAi4BlwHrgkxOXTlKUKfNobc/gJJ0HnABssP2yuuJERPO6eNF3o+3lO/pQ0jyK5HaB7UuLe/vhjs//AbiiPOx6pb46a3BfBI6r8f4R0QemeNG3yjYVSQLOBdba/lTH+UUdl70ZuKPcvxw4RdICSYcAS4FbpopR56paN5bt6ohoE/dsqNbRwNuB2yWtLs99GDhV0rIiEvcD7wawvUbSxcCdFD2wZ0zVgwoD8JpI2SZfCTB33sI+lyYiquhFfrN9E5M/V9vhSny2Pw58vGqMvic42yPACMCC3Q8elhekI2at4jWRqV/iHRR9T3ARMXwyFjUiWmtI8lt9vaiSLgS+AxwqaVTS6XXFiohm9fpF37rU2Yt6al33joj+MZnwMiJabEjyWxJcRHTJMDYkGS4JLiK6kiZqRLTakOS3JLiI6N50s/UOiiS4iOhaVtWKiFbKM7gZ2rrtKR7+5erpLxwyc+bMazTervP3mf6iHtGi5iZI2PWp5n6vJ556prFYAFu3PdlInGkm36gsQ7UiorXSRI2IVsrCzxHRaklwEdFKmQ8uIlrLwNYheQiXBBcRXRuS/JYEFxFdcpqoEdFSJrOJRESLpRc1Ilqp6EXtdymqqS3BSVoMfAl4HsUzyRHbn60rXkQ0wxZbx/MMbhvwAdu3SdoLuFXS1bbvrDFmRDRg1tfgbK8H1pf7j0taCxwEJMFFDLE0UbcjaQlwBHDzJJ+tBFYCMHf3JooTETsp78GVJO0JfA040/Zj239uewQYAZgzf98h+XchYvYqXhMZjmdwtS38DCBpHkVyu8D2pXXGiojmjLvaNhVJiyV9S9JaSWskvb88v6+kqyXdU/7cpzwvSZ+TtE7SDyW9Yrpy1rmyvYBzgbW2P1VXnIholg3bxqtt05joiHwJcBRwhqTDgLOAa20vBa4tjwGOB5aW20rg7OkC1FmDOxp4O/A6SavL7Y01xouIBkyMZKiyTXkfe73t28r9x4GJjsgVwPnlZecDJ5X7K4AvufBdYKGkRVPFqLMX9SZgOBrqEdGVLsai7i9pVcfxSPnc/dds1xF5YPkWBrbXS3puedlBwAMdXxstz63fUfCMZIiIrnXxmshG28unumD7jsji6dbkl05ybsqS1NrJEBHtY2Cs4jadHXREPjzR9Cx/bijPjwKLO75+MPDgVPdPgouIrhSdDKq0TWWKjsjLgdPK/dOAr3ecf0fZm3oU8OhEU3ZH0kSNiK71aCTDREfk7ZIm1gv9MPAJ4GJJpwM/BU4uP7sSeCOwDngKeNd0AZLgIqIrvZoPbpqOyGMnud7AGd3ESIKLiK5lLGpEtFLWRY2IVsuaDPGsPXeb8mXrnjvwQ29qLNa3T3m6sVhHvGfPxmLpplsaiwWw1388vJE4o9f8xoQ+XTOwNTW4iGirNFEjopWM0kSNiPbKhJcR0UrpRY2IVhvLqloR0UYmTdSIaLE0USOitdKLGhGtlCYqIGlX4EZgQRnnEtsfqSteRDQkvagAbAZeZ/uJctbOmyT9e7lYREQMKcO0k1kOijoXnTHwRHk4r9yGJO9HxFSGpYla98LPc8uZOjcAV9v+jZG+klZKWiVplcc311mciOgB05uFn5tQa4KzPWZ7GcXiEEdKetkk14zYXm57ueYsqLM4EdEj41alrd8aWXTG9iPA9cBxTcSLiPq4Yu2t1TU4SQdIWlju7wa8HrirrngR0Zzxilu/1dmLugg4X9JcikR6se0raowXEQ0w0y8JOCjq7EX9IXBEXfePiP4ZhNpZFZWaqJI+Jun3Je1Rd4EiYrANUy9q1Rrc/cCpwOckPQ58G7jR9ten/FZEtJIHoIe0ikoJzvZ5wHmSngf8Z+B/AiuBvWosW0QMogGpnVVRKcFJOgc4DHiYovb2FuC2GssVEQPKwLY2JThgP2Au8AjwS2Cj7W21lSoiBlbxDG44mqiVOhlsv9n2q4C/BhYC35I0WmvJImJg9eo9OEnnSdog6Y6Ocx+V9DNJq8vtjR2ffUjSOkl3S/qD6e5ftYl6AvBq4DXAPsB1FE3ViJiFevgM7ovA54EvbXf+07b/tvOEpMOAU4CXAs8HrpH0YttjO7p51Sbq8RRzu33W9oMVvxMRLdTLJqrtGyUtqXj5CuAi25uB+yStA44EvrOjL1TtRT1D0oHAKyW9ArjF9oaKhZr15u2yW6PxVrx0S2OxnjP/kMZije/3o8ZiNe0F71zSSJwN35+/8zfprhd1f0mrOo5HbI9U+N57Jb0DWAV8wPYm4CCgcz7J0fLcDlV90fdk4BbgZIrXRG6W9JYq342IdjEwNl5to+iQXN6xVUluZwMvApYB64FPlucnqzZOmWqrNlH/N/DKiVqbpAOAa4BLKn4/IlrENb4mYvvhiX1J/wBMjGEfBRZ3XHowMOUjs6qziczZrkn6iy6+GxEtY1fbZkLSoo7DNwMTPayXA6dIWiDpEGApRctyh6rW4K6S9A3gwvL4rcC/Vy9yRLSGwT2qwkm6EDiG4lndKPAR4BhJy4pI3A+8G8D2GkkXA3cC24AzpupBheqdDH8m6Y+A36VoB4/YvmxGv1FEDDXTuyaq7VMnOX3uFNd/HPh41ftXni7J9qXApfDsWgv/1fYFVb8fEe3hIZkvacrnaJL2Lt8c/rykN6jwXuBeit7UiJht3FUval9NV4P7MrCJ4kW6Pwb+DJgPrLC9uuayRcQA6mUTtW7TJbgX2n45PDujyEbgBbYfr71kETGw2pLgtk7s2B6TdF+SW0S0JcEdLumxcl/AbuWxKBav33u6AOWiM6uAn9k+YadKGxH9Z/CQzHg5ZYKzPbcHMd4PrAWmTYYRMfgMjA9AB0IVtY5GkHQw8CbgnDrjRESz2rbozEx9BvggU6zdIGklxfoOMHf3mosTEb0wLM/g6lzZ/gRgg+1bp7rO9sjETAOas6Cu4kREr1QchzoISbDOGtzRwInldMO7AntL+ortt9UYMyJqNkzvwdVWg7P9IdsH215CMc3wdUluEe3g8Wpbv9X9DC4i2sYwPgg9CBU0kuBsXw9c30SsiKjfsDRRU4OLiK4Ui870uxTVJMFFRNdSg4uIdvJgdCBUkQQXEV1LDS4iWsk4vagR0VIDMkqhiiS4iOhaElw86xeP3t1ovM+85aeNxTp7/nMai7Vt29ONxdo69lRjsQC++9//rpE4mx/6+U7fY5imS0qCi4jupQYXEa1kBmPJrAqS4CKiKwKUXtSIaCWTJmpEtNiQ1OBqXZMhItqo4oIMFZKgpPMkbZB0R8e5fSVdLeme8uc+5XlJ+pykdZJ+KOkV090/CS4iujMxpW9v5iz/InDcdufOAq61vRS4tjwGOB5YWm4rgbOnu3kSXER0TWOutE3H9o3AL7c7vQI4v9w/Hzip4/yXXPgusFDSoqnun2dwEdGd7iaE21/Sqo7jEdsj03znQNvrAWyvl/Tc8vxBwAMd142W59bv6EZJcBHRveoJbqPt5T2KqknOTVmQWhOcpPuBx4ExYFsPf9GI6JvaR9s/LGlRWXtbBGwoz48CizuuOxh4cKobNfEM7rW2lyW5RbSEgfGK28xcDpxW7p8GfL3j/DvK3tSjgEcnmrI7kiZqRHSvR0O1JF0IHEPxrG4U+AjwCeBiSacDPwVOLi+/EngjsA54CnjXdPevO8EZ+KYkA38/2cNFSSspunxh7u41Fycidpp7N1TL9qk7+OjYSa41cEY39687wR1t+8GyF+RqSXeV3cLPKpPeCMCc+fsOx+vREbPdkPw/tdZncLYfLH9uAC4DjqwzXkQ0pEcjGepWW4KTtIekvSb2gTcAd0z9rYgYfBVHMQzAtL91NlEPBC6TNBHnq7avqjFeRDRhiFZ+ri3B2b4XOLyu+0dE/1QZhjUI8ppIRHQnNbiIaLUBeL5WRRJcRHRvOJZkSIKLiC55MF4BqSIJLiK6lyZqRLSS04saEW2WJupMiMnntKvDcPwBzcS2sacbi+XNzT1tXjBvr8Zibd66rbFYhab+PvYoThJcRLRS1kWNiPYajHGmVSTBRUT30skQEa00sS7qEEiCi4iuiN7N6Fu3JLiI6N5w5LckuIiYgTRRI6KVJpYNHAJJcBHRJcP4cGS4JLiI6M4Qvehb66pakhZKukTSXZLWSvqdOuNFREOGZFWtumtwnwWusv0WSfOBrOwc0QazvZNB0t7Aa4B3AtjeAmypK15ENGg48lutTdQXAj8H/lHS9yWdU66P+mskrZS0StIqjz9TY3EioidcsXk6AE3UOhPcLsArgLNtHwE8CZy1/UW2R2wvt71cc3atsTgR0Ssad6Vt2vtI90u6XdJqSavKc/tKulrSPeXPfWZazjoT3Cgwavvm8vgSioQXEcNsYtnA3tXgXmt7me3l5fFZwLW2lwLXMknFqKraEpzth4AHJB1anjoWuLOueBHRIFfcZmYFcH65fz5w0kxvVHcv6vuAC8oe1HuBd9UcLyKa0LteVAPflGTg722PAAfaXl+E8XpJz53pzWtNcLZXA8unvTAihkv15uf+E8/WSiNlEptwtO0HyyR2taS7elZGMpIhIrrV3bqoGzuerU1yKz9Y/twg6TLgSOBhSYvK2tsiYMNMi1rrSIaIaKkedDJI2kPSXhP7wBuAO4DLgdPKy04Dvj7TYqYGFxHd680juAOByyRBkYu+avsqSd8DLpZ0OvBT4OSZBkiCi4juGNSDTgbb9wKHT3L+FxRvXey0JLiI6N5wzJaUBBcRMzDbB9tHREuZLBsYEW2VhZ9naIimCg0A5s6d31isBfOf01is3Xc7sLFYABsfWdNovJ1lD8dDuAFLcBExDDwkvQxJcBHRFWOcJmpEtJLTRI2I1jL2tn4XopIkuIjoWmpwEdFSToKLiHYqXuZKgouIlkoNLiLayWZ8fKzfpaiktgkvJR1aLgU2sT0m6cy64kVEc8x4pa3faqvB2b4bWAYgaS7wM+CyuuJFRDOcTobfcCzwY9s/aSheRNQoCe7XnQJcONkHklYCKwGYu3tDxYmImTPDMuNl7YvOlGuingj882Sf2x6xvdz2cs1ZUHdxIqIH7PFKW781UYM7HrjN9sMNxIqIutmMj2eo1oRT2UHzNCKGT/Gib2YTQdLuwO8D764zTkQ0axCan1XUmuBsPwXsV2eMiGhaXhOJiBZLgouIlvJAjFKoIgkuIrpik17UiGir4XnRNwkuIro2LIvO1D6SISLap1cjGSQdJ+luSeskndXrcqYGFxFd6s1rIuUsQ1+geFd2FPiepMtt37nTNy8lwUVEV2wz3ptVtY4E1tm+F0DSRcAKoJ0Jzls3bXzmgYu6nVJpf2BjHeUZAAP/uz0zs6/N6Pd6bGaxmjTwf17Af9jZG3jrpm8888BF+1e8fFdJqzqOR2yPlPsHAQ90fDYKvGpny9dpsBKcfUC335G0yvbyOsrTb2393fJ7DTfbx/XoVprs9j26N5BOhojon1FgccfxwcCDvQyQBBcR/fI9YKmkQ8p5I08BLu9lgIFqos7QyPSXDK22/m75vQLb2yS9F/gGMBc4z/aaXsbQsLywFxHRrTRRI6K1kuAiorWGOsHVPcyjHyQtlvQtSWslrZH0/n6XqZckzZX0fUlX9LssvSRpoaRLJN1V/tn9Tr/LFEP8DK4c5vEjOoZ5AKf2cphHP0haBCyyfZukvYBbgZOG/feaIOlPgeXA3rZP6Hd5ekXS+cC3bZ9T9gjubvuRfpdrthvmGtyzwzxsbwEmhnkMNdvrbd9W7j8OrKV443voSToYeBNwTr/L0kuS9gZeA5wLYHtLkttgGOYEN9kwj1YkggmSlgBHADf3tyQ98xnggwzLZGLVvRD4OfCPZfP7HEl79LtQMdwJrvZhHv0kaU/ga8CZtodgGObUJJ0AbLB9a7/LUoNdgFcAZ9s+AngSaMUz4WE3zAmu9mEe/SJpHkVyu8D2pf0uT48cDZwo6X6Kxwmvk/SV/hapZ0aBUdsTNe1LKBJe9NkwJ7jah3n0gyRRPMtZa/tT/S5Pr9j+kO2DbS+h+LO6zvbb+lysnrD9EPCApEPLU8fSwyl/YuaGdqhWE8M8+uRo4O3A7ZJWl+c+bPvKPpYppvc+4ILyH9t7gXf1uTzBEL8mEhExnWFuokZETCkJLiJaKwkuIlorCS4iWisJLiJaKwlulpL0PEkXSfqxpDslXSnpxTu4domkO5ouY8TOSoKbhcqXiS8Drrf9ItuHAR8GDuxvySJ6KwludnotsNX2/504YXs1cJOkv5F0h6TbJb11+y9Keqekz3ccXyHpmHL/CUl/JelWSddIOlLS9ZLulXRix/cvlXSVpHsk/XXtv23MWklws9PLKOaZ294fAcuAw4HXA39Tzk9X1R4UtcLfBh4H/pJivr43Ax/ruG4Z8Fbg5cBbJS3e/kYRvZAEF51+F7jQ9pjth4EbgFd28f0twFXl/u3ADba3lvtLOq671vajtp+hGLO506utR0wmCW52WgP89iTnJ5uCanvb+PW/N7t27G/1r8b+jQObAWyP8+vjnjd37I8xxGOiY7Alwc1O1wELJP3JxAlJrwQ2UTQZ50o6gGKW2lu2++79wDJJc8qm5ZENlTmia/mXcxaybUlvBj5TLtbzDEXiOhPYE/gBxeShH7T9UDmz8IT/B9xH0ey8A7ituZJHdCeziUREa6WJGhGtlQQXEa2VBBcRrZUEFxGtlQQXEa2VBBcRrZUEFxGt9f8BIGI9/L1mGpoAAAAASUVORK5CYII=
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>This plot can be made for any of the arrays in the table. To read in and plot a different cell, change the row number from [0] to another number.</p>
-<p><br>Some arrays contain no numbers, only NaN values. This results in completely blank image frames:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">34</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[11]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([[nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan],
-       [nan, nan, nan, nan, nan, nan, nan, nan]], dtype=float32)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Flux Row 34&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;column&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;row&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">34</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">clim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAEWCAYAAADy2YssAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMi4yLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvhp/UCwAAGa5JREFUeJzt3X2wZVV95vHvI6JEgaD2FVsa0sT0UL5UbMwdBouRIJiIxgCpyAzMqMSQaWtEhUoyik5lNJUwmpQvkYpS6QCxFZQgiiLDqAyvMlH0NiDaNGiLKC0N3a0i+AZ232f+2OvISc992fv22edl9/OxVvXZ++yz1rql9XOtvd5km4iILnrcqCsQEdGWBLiI6KwEuIjorAS4iOisBLiI6KwEuIjorAS4jpC0UpIlPX7UdYkYFwlwE0bSPZJ+JunHfemZLZbXC5y9su6RdHZb5fWVe5GkLZIekvQNSX8yz3NvL/V7Sdt1ismTADeZft/2vn3pviGUeYDtfYFXAn8h6XdaLu+dwErb+wMnAH8t6bf6H5D0rFKfLS3XJSZUAlxHlZbWS/qu3yHpovL5P0q6W9L+5fplku6XNLVYvrZngA3A6r68ny3pekkPStog6YRy/9By73Hl+nxJW/t+d5Gks+YpZ4PtR3qXJT1rl8f+HngL8Ohi9Y49UwLcHsj2PwNfBM6V9DTgAuBPbG9b7LeSjgSeB2wq13sDnwE+DzwdeCNwsaTDbH8beAg4vPz8RcCPJT27XB8N3LBAWR+U9FPgTqpW2lV9350MPGr7qvl+H5EAN5k+VVpGD0r61BLzOAM4Frge+IztKxd5frukn1EFxg8CvXKPBPYF3mX7UdvXAlcCp5bvbwB+W9IzyvVl5fpQYH/gq/MVaPv1wH5UgfGTwCMAkvYF/icwZ+svoicBbjKdZPuAkk5aSga2HwQ+TtUae0+NnyyjCmR/DhwD7F3uPxO41/Zs37PfAQ4qn28ozx8N3EgVUH+7pC/s8ru56rnT9k3ACuC/ltt/CXyktBAj5pUA110/AZ7Ud/2M/i8lrQb+GPgYcG6dDEuweQ/wc+D15fZ9wMG992zFIcD3yucbqFpgx5TPNwFHUQW4ebunc3g8j72DOw54U3lveD9wMHCppLc0yC/2AAlw3XUbcIqkvSVNU402AiBpH+Ai4G3Aa4GDJL1+7mzm9C7gzSWfm6mC6ZtLWccAvw9cAmD7m8DPgFcBN9p+CHgA+EPmCXCSni7pFEn7StpL0kupurzXlkeOo2p5ri7pPuB1wAca/A2xB0iA666/oGrx/JCqS/fRvu/eCWy2fV4ZqXwV1TSMVTXz/l8l3/9i+1GqaRwvA7ZTvZ97je07+56/Afi+7e/2XQu4dZ78TdUd3VzKeTdwlu1PA9j+vu37ewnYCfzQ9o9r1j/2EMqGlxHRVWnBRURnJcBFxEhI2kfSlyV9tUwQ/8ty/1BJN0v6pqR/lvSEcv+J5XpT+X7lYmUkwEXEqDwCHGv7+VSDRceXieR/A7zP9iqqd7Cnl+dPp3rX+hvA+8pzC0qAi4iRcKU3MLR3SaaagH5Zub8O6M31PLFcU74/TpIWKmOsttZZtmyZV65cOepqRHTW+vXrt9tedM3xQo4//kXevv2HNcvbsIFq3mTPWttrexeS9gLWA79BNc3nW8CDtneURzbz2KTxg4B7AWzvkPQj4GlUo/dzGqsAt3LlSmZmZkZdjYjOkvSd3c1j+/YfMjPzyZrlHfZz29PzfW97J7Ba0gHA5cCz53qsl90C380pXdSIaMw1/1M7v2rp4PVUa5sP6Nu4dQXVRG6oWnMHA5TvfxX4wUL5JsBFRGP2zlppIZKmSssNSb8CvATYCFzHYytvTgM+XT5fUa4p31/rRSbyjlUXNSImQW97vt22HFhX3sM9DrjU9pWS7gAukfTXVKtdLijPXwB8RNImqpbbKYsVkAAXEY016X7Om4d9O4/tFdh//27giDnu/xw4uUkZCXARsQQL7nI1NhLgIqIRA5Oyhj0BLiIaajZCOkoJcBHRmFl4hHRcJMBFxBJMRguu1Xlwko6XdFdZ/d/6YcERMQzGrpdGrbUAV+a2fIBqp9fnAKdKek5b5UXEMLlmGq02W3BHAJts3122tb6EajeAiJhwZrZWGrU2A9wvV/4X/bsC/JKkNZJmJM1s27boucMRMWJV93O2Vhq1NgNcrZX/ttfanrY9PTW1W7u4RMSQDHqxfVvaHEX95cr/on9XgIiYaKNvndXRZgvuK8Cqsr/6E6gWxl7RYnkRMSR7fAuu7Lj5BuBzwF7AhbY3tFVeRAzLeIyQ1tHqRF/bVwFXtVlGRAzfOMxxqyMrGSKisSzViohOGpf3a3UkwEXEEiTARURHjcMk3joS4CJiCdKCi4hO8lisM60jAS4iGksXNSI6qZrmmy5qRHRSVjJERIdNyEKGBLiIaG4y3sAlwEVEQzbMpgUXEV01IfGt3VO1IqKLhF0vLZiLdLCk6yRtlLRB0pnl/jskfU/SbSW9vO83by2n9N0l6aWL1TQtuIhobEAtuB3An9m+RdJ+wHpJV5fv3mf73f0Pl1P5TgGeCzwT+D+S/o3tebc2SQsuIhox1Tu4OmnBfOwttm8pnx8GNjLHwVR9TgQusf2I7W8Dm6hO75tXAlxENDboU1ElrQQOB24ut94g6XZJF0p6SrlX66S+fglwEdFYgxbcst6xoCWt2TUvSfsCnwDOsv0QcB7wLGA1sAV4T+/ROaqyYBxt7R2cpAuBVwBbbT+vrXIiYvgaTPTdbnt6vi8l7U0V3C62/ckqbz/Q9/0/AleWy8Yn9bXZgvsQcHyL+UfECJhqom+dtBBJAi4ANtp+b9/95X2P/QHw9fL5CuAUSU+UdCiwCvjyQmW0earWjaVfHRFd4oEt1ToKeDXwNUm3lXtvA06VtLoqiXuA1wHY3iDpUuAOqhHYMxYaQYUxmCZS+uRrAA455JAR1yYi6hhEfLN9E3O/V5v3JD7b5wDn1C1j5IMMttfanrY9PTU1NerqRMQiqmkiqpVGbeQtuIiYPFmLGhGdNSHxrb0uqqSPAV8EDpO0WdLpbZUVEcM16Im+bWlzFPXUtvKOiNEx2fAyIjpsQuJbAlxENGTYOSERLgEuIhpJFzUiOm1C4lsCXEQ0t9huveMiAS4iGsupWhHRSXkHFxGdlqVaEdFZ6aJGRCfl4OeI6LQEuIjopN5+cJMgAS4iGjHwiwl5CZcAFxGNTUh8S4CLiIacLmpEdJTJbiIR0WEZRY2ITqpGUUddi3paC3CSDgY+DDyD6p3kWtvvb6u8iBgOW/xiNu/gdgB/ZvsWSfsB6yVdbfuOFsuMiCHY41twtrcAW8rnhyVtBA4CEuAiJtgkdVGHcrK9pJXA4cDNc3y3RtKMpJlt27YNozoRsZtma6ZRaz3ASdoX+ARwlu2Hdv3e9lrb07anp6am2q5OROymapqIaqVRazXASdqbKrhdbPuTbZYVEcMz63ppIZIOlnSdpI2SNkg6s9x/qqSrJX2z/PuUcl+SzpW0SdLtkl6wWD3bPNlewAXARtvvbauciBguG3bM1kuL6A1EPhs4EjhD0nOAs4FrbK8CrinXAC8DVpW0BjhvsQLabMEdBbwaOFbSbSW9vMXyImIIeisZ6qQF87G32L6lfH4Y6A1EngisK4+tA04qn08EPuzKl4ADJC1fqIw2R1FvAkbfCY+IgWuwFnWZpJm+67W21+760C4DkQeWWRjY3iLp6eWxg4B7+362udzbMl/hWckQEY01mCay3fb0Qg/sOhBZvd2a+9E57i1Yk6FME4mI7jCws2ZazDwDkQ/0up7l363l/mbg4L6frwDuWyj/BLiIaKQaZFCttJAFBiKvAE4rn08DPt13/zVlNPVI4Ee9rux80kWNiMYGtJKhNxD5NUm3lXtvA94FXCrpdOC7wMnlu6uAlwObgJ8Cr12sgAS4iGhkUPvBLTIQedwczxs4o0kZCXAR0dikrEVNgIuIRnIuakR0Ws5kiIhOMvCLtOAioqvSRY2ITjJKFzUiumscNrOsIwEuIhrJKGpEdNrOnKoVEV1k0kWNiA5LFzUiOiujqBHRSemiApL2AW4EnljKucz229sqLyKGJKOoADwCHGv7x2XXzpsk/e9yWERETCjDoptZjos2D50x8ONyuXdJExL3I2Ihk9JFbfvg573KTp1bgatt3zzHM2skzUia2bZtW5vViYgBMIM5+HkYWg1wtnfaXk11OMQRkp43xzNrbU/bnp6ammqzOhExILNWrTRqQzl0xvaDwPXA8cMoLyLa45qtt0634CRNSTqgfP4V4CXAnW2VFxHDM1szjVqbo6jLgXWS9qIKpJfavrLF8iJiCMziRwKOizZHUW8HDm8r/4gYnXFondWRlQwR0UhvFHUSJMBFRGMegxHSOmoFOElfoFp29QXg/9p+uNVaRcT4GpMR0jrqjqKeBtwF/CHwL2Vi7vvaq1ZEjCsDO1wvjVqtFpztuyX9DHi0pBcDz26zYhExnqp3cJPRRa3VgpP0LeBTwIHABcDzbGfSbsQealDz4CRdKGmrpK/33XuHpO9Juq2kl/d991ZJmyTdJemli+Vft4t6LvBd4FTgTcBpkp5V87cR0TEDXMnwIeZe4fQ+26tLugpA0nOAU4Dnlt98sMyznVetAGf7/bZPplqNsB54B/CNWtWPiE7pdVEHsRbV9o3AD2oWfSJwie1HbH8b2AQcsdAP6nZR3yPpZuBmYDXwP4BVNSsVEV3SbC3qst5uQSWtqVnKGyTdXrqwTyn3DgLu7Xtmc7k3r7rz4L4E/K3tB2o+HxEdZWBn/aUM221PNyziPOCvSlF/BbwH+GNgribhgh3huqOoH5d0gqSjy60bbH+mfn0jokvc4hSQ/oaUpH8EemvYNwMH9z26ArhvobzqdlHfCZwJ3FHSm8q9iNgD2fXSUkha3nf5B0BvhPUK4BRJT5R0KNVrsi8vlFfdLurvAattz5YKrANuBd7apOIR0QEGD6gJJ+ljwDFU7+o2A28HjpG0uiqJe4DXAdjeIOlSqkbWDuAM2zsXyr/JWtQDeGy041cb/C4iOsQMrotq+9Q5bl+wwPPnAOfUzX/RACdJwLuBWyVdR/Wi72jSeovYY3lC9ktaNMDZtqQzgSOBf0sV4N5i+/62KxcRY8iNRlFHqsk0kRW2r2izMhEx/gbZRW1b3QD3YuB1kr4D/ISqFWfbv9lazSJibHUtwL2s1VpExETpVICz/Z2lFlAWw84A37P9iqXmExFjwuAJ2fFyGFuWnwlsBPYfQlkR0TIDsxMyyNDqwc+SVlBNEj6/zXIiYrj2+IOfi78D3swCe99JWtPbaWDbtm0tVyciBqHNpVqD1ObJ9q8Attpev9BzttfanrY9PTU11VZ1ImJQaga3cQhwbb6DOwo4oWw3vA+wv6SLbL+qxTIjomWTNA+utRac7bfaXmF7JdU2w9cmuEV0g2frpVHLwc8R0YxhdhxGEGoYSoCzfT1w/TDKioj2TUoXNS24iGikOnRm1LWoJwEuIhpLCy4iusnjMYBQRwJcRDSWFlxEdJJxRlEjoqPGZJVCHQlwEdFYAlxEdNIkbZeUABcRzaUFFxGdZCbmWK0EuIhoRIAyihoRnWTSRY2IDpuQFlzbW5ZHROfUPJChRhCUdKGkrZK+3nfvqZKulvTN8u9Tyn1JOlfSJkm3S3rBYvknwEVEM70tfQezZ/mHgON3uXc2cI3tVcA15Rqq85lXlbQGOG+xzBPgIqIx7XSttBjbNwI/2OX2icC68nkdcFLf/Q+78iXgAEnLF8o/7+AioplmG8ItkzTTd73W9tpFfnOg7S0AtrdIenq5fxBwb99zm8u9LfNllAAXEc3VD3DbbU8PqFTNcW/BirQa4CTdAzwM7AR2DPAPjYiRaX21/QOSlpfW23Jga7m/GTi477kVwH0LZTSMd3Avtr06wS2iI0x1lHudtDRXAKeVz6cBn+67/5oymnok8KNeV3Y+6aJGRHMDWqol6WPAMVTv6jYDbwfeBVwq6XTgu8DJ5fGrgJcDm4CfAq9dLP+2A5yBz0sy8A9zvVyUtIZqyJdDDjmk5epExG7z4JZq2T51nq+Om+NZA2c0yb/tLupRtl9ANX/lDElH7/qA7bW2p21PT01NtVydiBgI10wj1mqAs31f+XcrcDlwRJvlRcSQDGglQ9taC3CSnixpv95n4HeBry/8q4gYfzVXMYzBtr9tvoM7ELhcUq+cj9r+bIvlRcQwTNDJz60FONt3A89vK/+IGJ06y7DGQaaJREQzacFFRKeNwfu1OhLgIqK5yTiSIQEuIhryeEwBqSMBLiKaSxc1IjrJGUWNiC5LFzUiOisBLiI6aUwW0teRABcRDY3HOtM6EuAiorkMMkREJ/XORZ0ACXAR0YgY3I6+bUuAi4jmJiO+JcBFxBKkixoRndQ7NnACJMBFREOG2cmIcAlwEdHMBE30bfVULUkHSLpM0p2SNkp6YZvlRcSQTMipWm234N4PfNb2KyU9AXhSy+VFxDDs6YMMkvYHjgb+CMD2o8CjbZUXEUM0GfGt1S7qrwPbgH+SdKuk88v5qP+KpDWSZiTNbNu2rcXqRMRAuGb3dAy6qG0GuMcDLwDOs3048BPg7F0fsr3W9rTt6ampqRarExGDolnXSovmI90j6WuSbpM0U+49VdLVkr5Z/n3KUuvZZoDbDGy2fXO5vowq4EXEJOsdGzi4FtyLba+2PV2uzwausb0KuIY5GkZ1tRbgbN8P3CvpsHLrOOCOtsqLiCFyzbQ0JwLryud1wElLzajtUdQ3AheXEdS7gde2XF5EDMPgRlENfF6SgX+wvRY40PaWqhhvkfT0pWbeaoCzfRswveiDETFZ6nc/l/XerRVrSxDrOcr2fSWIXS3pzoHVkaxkiIimmp2Lur3v3docWfm+8u9WSZcDRwAPSFpeWm/Lga1LrWqrKxkioqMGMMgg6cmS9ut9Bn4X+DpwBXBaeew04NNLrWZacBHR3GBewR0IXC4Jqlj0UduflfQV4FJJpwPfBU5eagEJcBHRjEEDGGSwfTfw/Dnuf59q1sVuS4CLiOYmY7ekBLiIWII9fbF9RHSUybGBEdFVOfg5IjrMnoyXcAlwEdGYJ2SUIQEuIhoxxumiRkQnOV3UiOgsY+8YdSVqSYCLiMbSgouIjnICXER0U7VZbwJcRHRUWnAR0U02s7M7R12LWlrb8FLSYeUosF56SNJZbZUXEcNjZmulUWutBWf7LmA1gKS9gO8Bl7dVXkQMhzPI8P85DviW7e8MqbyIaNGkBLhhnclwCvCxub6QtEbSjKSZbdu2Dak6EbF0ptrxsk4ardYDXDkT9QTg43N9b3ut7Wnb01NTU21XJyIGwJ6tlUZtGF3UlwG32H5gCGVFRNtsZmezVKvnVObpnkbE5Kkm+mY3ESQ9Cfgd4HVtlhMRwzUO3c86Wg1wtn8KPK3NMiJi2DJNJCI6LAEuIjrKY7FKoY4EuIhoxCajqBHRVb2JvuMvAS4iGpuUQ2eGtVQrIjpkUCsZJB0v6S5JmySdPeh6pgUXEQ0NZppI2WXoA1RzZTcDX5F0he07djvzIgEuIhqxzexgTtU6Athk+24ASZcAJwLdDHDr16/fLqnplkrLgO1t1GcMdPVvy981Or+2uxn4Fz/83M/vvWRZzcf3kTTTd73W9try+SDg3r7vNgP/bnfr12+sApztxtuJSJqxPd1GfUatq39b/q7JZvv4AWWlubIfUN5ABhkiYnQ2Awf3Xa8A7htkAQlwETEqXwFWSTq07Bt5CnDFIAsYqy7qEq1d/JGJ1dW/LX9XYHuHpDcAnwP2Ai60vWGQZWhSJuxFRDSVLmpEdFYCXER01kQHuLaXeYyCpIMlXSdpo6QNks4cdZ0GSdJekm6VdOWo6zJIkg6QdJmkO8t/dy8cdZ1igt/BlWUe36BvmQdw6iCXeYyCpOXActu3SNoPWA+cNOl/V4+kPwWmgf1tv2LU9RkUSeuAL9g+v4wIPsn2g6Ou155ukltwv1zmYftRoLfMY6LZ3mL7lvL5YWAj1YzviSdpBfB7wPmjrssgSdofOBq4AMD2owlu42GSA9xcyzw6EQh6JK0EDgduHm1NBubvgDczKZuJ1ffrwDbgn0r3+3xJTx51pWKyA1zryzxGSdK+wCeAs2w/NOr67C5JrwC22l4/6rq04PHAC4DzbB8O/AToxDvhSTfJAa71ZR6jImlvquB2se1Pjro+A3IUcIKke6heJxwr6aLRVmlgNgObbfda2pdRBbwYsUkOcK0v8xgFSaJ6l7PR9ntHXZ9Bsf1W2ytsr6T67+pa268acbUGwvb9wL2SDiu3jmOAW/7E0k3sUq1hLPMYkaOAVwNfk3Rbufc221eNsE6xuDcCF5f/s70beO2I6xNM8DSRiIjFTHIXNSJiQQlwEdFZCXAR0VkJcBHRWQlwEdFZCXCxIEnvkPTno65HxFIkwEVEZyXA7aEkvUbS7ZK+Kukjkn5N0jXl3jWSDpnjN9dLmi6fl5VlV0j6I0mfkvQZSd+W9AZJf1oWnn9J0lP7fv83kr4s6RuSXjTUPzr2OAlweyBJzwX+O3Cs7ecDZwJ/D3zY9m8CFwPnNsz2ecB/otrG6hzgp2Xh+ReB1/Q993jbRwBnAW/frT8kYhEJcHumY4HLbG8HsP0D4IXAR8v3HwH+fcM8r7P9sO1twI+Az5T7XwNW9j3X2zxg/S73IwYuAW7PJBbfWmqu73fw2P9m9tnlu0f6Ps/2Xc/yr9c89+7vZILXQsdkSIDbM10D/AdJTwMo78j+hWqXD4D/DNw0x+/uAX6rfH5ly3WM2G35f9A9kO0Nks4BbpC0E7gVeBNwoaT/RrU77Vy7YbwbuFTSq4Frh1bhiCXKbiIR0VnpokZEZyXARURnJcBFRGclwEVEZyXARURnJcBFRGclwEVEZ/0/gstlwbkYR2IAAAAASUVORK5CYII=
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>We can also view the difference between one frame and another. For example, if we want to see the change from the flux at time in row 20 subtracted from the flux at time in row 19, we can write the following:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">28</span><span class="p">],</span> <span class="n">binarytab</span><span class="p">[</span><span class="s1">&#39;FLUX&#39;</span><span class="p">][</span><span class="mi">29</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[[-0.10368347  1.2084408   0.7001476  -0.04124689 -1.0750767  -0.13303757
-   1.1955365  -0.308725  ]
- [-0.8178196   3.288806   -0.01144838  4.190505    1.0418396  -0.12780714
-  -1.6264764   0.39404774]
- [-0.80597305  1.1767769  -2.1247475   2.0623436   1.0380287  -2.25745
-  -0.9374518  -1.7162728 ]
- [-0.8251231  -0.22384816 -0.72644997 -0.04460144  3.20755     0.5736923
-   1.1855717   1.1150208 ]
- [-0.10608602  1.8990426  -0.7197819   1.3527222  -1.2155457  -0.84685516
-  -0.22213173 -2.4338684 ]
- [ 1.3052053   0.488378   -1.4316924   1.3895159   1.0554571   2.7365294
-  -0.21660066  1.1082048 ]
- [-2.248003   -2.3650186  -2.852107    4.1624756   1.0340705  -0.8345432
-   0.48870218 -1.7171237 ]
- [-0.10844719 -1.6385655  -0.7226268  -1.4699272   1.7503319  -1.532999
-   1.8900471   1.1174535 ]]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can then plot this array as well:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Flux Row 28 minus 29&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Column&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Row&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">clim</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="aperture_ID"></a></p>
-<h2 id="The-Aperture-Extension">The Aperture Extension<a class="anchor-link" href="#The-Aperture-Extension">&#182;</a></h2><p>We can also make a plot of the third header extension; the image extension. This data is stored as an array of integers that encodes which pixels were collected from the spacecraft and which were used in the optimal aperture (look here for more information on the <a href="https://archive.stsci.edu/kepler/manuals/archive_manual.pdf#page=24">aperture extension</a>). 
-<br> 
-<br>First, we need to re-open the FITS file and access the header. Next, we read the the image extension (No. 2, APERTURE) and print it as an array:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdulist</span><span class="p">:</span> 
-    <span class="n">imgdata</span> <span class="o">=</span> <span class="n">hdulist</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-    
-<span class="nb">print</span><span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[[1 1 1 1 1 1 1 1]
- [1 1 1 1 1 1 1 1]
- [1 1 1 1 1 1 1 1]
- [1 1 1 1 3 1 1 1]
- [1 1 1 1 3 1 1 1]
- [1 1 1 1 1 1 1 1]
- [1 1 1 1 1 1 1 1]
- [1 1 1 1 1 1 1 1]]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><br>We can then plot the above array, which will show the pixels used in the optimal aperture for photometry:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;TPF APERTURE&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Column&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Row&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x7fa32ed20828&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQYAAAEWCAYAAACE4zmnAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMi4yLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvhp/UCwAAD9hJREFUeJzt3XuM5WV9x/H3hxUQFghVUZSFIsZiqUbAhUiwRvAGFcU7UKViL6RJMZC2EjBtbE3/aNUaTGw0BFFbV6hBaI1BKIqotAouuJbLYosrworLpYiAxb1++8c5Q4d5BmaWOc+cmdn3KznhXH6/3/d7WPbD73aeJ1WFJE2207gbkLTwGAySGgaDpIbBIKlhMEhqGAySGgaDpIbBsIAkeWTSY1uSRye9fleSv0qyefj6wST/keSo4bqnJdk6ZRufmKHeZ5NsSfK8Ke9vb51HJraR5I5JfW8Y1thj+NlXJy2/OcmmSa8/Ndz2tdP0eUeS10zqeWK9B5JcleRFk5Z90v40OwbDAlJVe0w8gDuBN056b9VwsX8efr4PcC1waZIMP/vO5G1U1RlPVCvJcuBtwC+Ad02zyPbU2aOq7p607huH6x4KHAacO/x+x0/6fquAD09a/4+341/Vh4fb2A/4KfDpKZ/P1J9mYDAsUlW1GfgcsC/wzKewibcBDwIfAt7To05VbQCuZBAQI1dVjwJf7LX9HZnBsEgl2RU4DVhfVfc/hU28B7gIuBh4UZLDR10nyQrgeOD2p9DfbLa/HDil1/Z3ZAbD4vPOJA8CdwEvA9486bOXD88JTDxePt0GkhwAHAN8oaruAb5Ou9ewPXV+NGXdf0ny8HDde4EPPsXv+kT+fNjbw8ArgFOnfD5Tf5qBwbD4fLGq9q6qZ1fVsVV1w6TPvjv8bOLx3SfYxqnA2qpaM3y9CvjdJDs/xTovmLL9N1fVnsCrgBcBz5rld9sC7DzN+zsDmye9/mhV7Q0cCDwKHDxl+Zn60wwMhh3T7wEHDa8abAA+xuAv7/GjLFJV3wQ+C3x0lqvcCRww6SQnSXYHng38ZJrt3wmcCXw8yW5zbliPMRh2MMPLji8AjmRw0u5Q4MXAF3iSk5BzcB7w2iSzOUF4HfAr4JwkTx+eQ/hbYDXTBANAVV0F3A2cPqJ+hcGwI3oP8K9VdVNVbZh4AB8HTkjyjFls46hp7hM4YroFq+o+4B+Bv5xpo1W1EXgDg0OQ9cA64HnAO+vJBw75CHD28ETpdvWn6cWBWiRN5R6DpIbBIKlhMEhqGAySGk8bdwOTZdmulWXLx92GtGTV1l9SWzdmpuUWWDAsZ9d9Xz/uNqQla+OGK2e1nIcSkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhpdgyHJcUl+mOT2JOf0rCVpdLoFQ5JlwD8wGEfwEOCUJIf0qidpdHruMRwJ3F5V66pqE4P5C07sWE/SiPQMhv0YzCswYf3wvcdJcnqS1UlW17aNHduRNFs9g2G6n3Y2A0xW1flVtbKqVmanXadZRdJ86xkM64H9J71ewWCYb0kLXM9g+B7wwiTPT7ILcDLw5Y71JI1It4FaqmpLkjMYzHa8DLiwqm7pVU/S6HQdwamqLgcu71lD0uh556OkhsEgqWEwSGoYDJIaBoOkhsEgqWEwSGoYDJIaBoOkhsEgqWEwSGoYDJIaBoOkhsEgqWEwSGoYDJIaBoOkhsEgqdFzJqoLk9yb5OZeNST10XOP4bPAcR23L6mTbsFQVd8CHui1fUn9dB0lejaSnA6cDsCy3cfbjCRgAZx8dIo6aeEZezBIWngMBkmNnpcrLwK+AxycZH2SP+hVS9Jo9Zy78pRe25bUl4cSkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhoGg6RGzzEf90/yjSRrk9yS5MxetSSNVs8JZ7YAf1ZVNybZE7ghyVVVdWvHmpJGoOcUdT+rqhuHzx8G1gL79aonaXTmZYq6JAcChwHXTfOZU9RJC0z3k49J9gC+BJxVVQ9N/dwp6qSFp2swJNmZQSisqqpLe9aSNDo9r0oE+DSwtqo+1quOpNHrucdwNHAqcGySNcPH73SsJ2lEek5Rdy2QXtuX1I93PkpqGAySGgaDpIbBIKlhMEhqGAySGgaDpIbBIKkxL7+u1NL16J1/PW+1djvgg/NWa0fnHoOkhsEgqWEwSGoYDJIaBoOkhsEgqWEwSGoYDJIaBoOkRs/BYJ+e5PokPxhOUTd/t8hJmpOet0RvBI6tqkeGw8hfm+SrVfXdjjUljUDPwWALeGT4cufho3rVkzQ6vSecWZZkDXAvcFVVTTtFXZLVSVbXto0925E0S12Doaq2VtWhwArgyCQvnmYZp6iTFph5uSpRVQ8C1wDHzUc9SXPT86rEPkn2Hj7fDXgNcFuvepJGp+dViecCn0uyjEEAfbGqvtKxnqQR6XlV4j+Bw3ptX1I/szqUSPKhJK9Nsrx3Q5LGb7bnGO4ATgFWD+9m/PskJ/ZrS9I4zSoYqurCqvp94Bjg88A7hv+UtATN6hxDkguAQ4B7gG8Dbwdu7NiXpDGa7aHEM4FlwIPAA8D9VbWlW1eSxmpWewxV9RaAJL8JvB74RpJlVbWiZ3OSxmO2hxInAL8NvBL4NeBqBocUkpag2d7HcDzwLeDjVXV3x34kLQCzPZT4kyTPAY5IcjhwfVXd27c1SeMy2xuc3gFcz+Ay5TuB65K8vWdjksZntocSfwEcMbGXkGQf4GvAJb0akzQ+s71cudOUQ4f/2Y51JS0ys91juCLJlcBFw9cnAV/t05KkcZvtycf3J3kr8AogwPlVdVnXziSNzax/dl1VlwKXwmNjOb6rqlZ160zS2DzpeYIkeyU5N8knkrwuA2cA6xhcnZC0BM20x/BPwM+B7wB/CLwf2AU4sarWdO5N0pjMFAwHVdVL4LFfWN4PHFBVD3fvTNLYzHTJcfPEk6raCvzYUJCWvpn2GF6a5KHh8wC7DV+HwWRTe81UYDgY7Grgp1V1wpy6lTQvnjQYqmrZCGqcCawFZgwRSQtD7ynqVgBvAC7oWUfSaPW+rfk84Gxg2xMt4NyV0sLTcyaqE4B7q+qGJ1vOuSulhafnHsPRwJuS3AFcDBybxJGlpUWgWzBU1blVtaKqDgROBq6uqnf3qidpdPzptKRGz0ltH1NV1wDXzEctSXPnHoOkhsEgqWEwSGoYDJIaBoOkhsEgqWEwSGrMy30MWrp2O+CD425BHbjHIKlhMEhqGAySGgaDpIbBIKlhMEhqGAySGgaDpIbBIKlhMEhqdL0lejhC9MPAVmBLVa3sWU/SaMzHbyWOqar756GOpBHxUEJSo3cwFPBvSW5Icvp0CzhFnbTw9D6UOLqq7k7ybOCqJLdV1bcmL1BV5wPnA+y0yzOqcz+SZqHrHkNV3T38573AZcCRPetJGo2ek9ouT7LnxHPgdcDNvepJGp2ehxLPAS5LMlHnC1V1Rcd6kkakWzBU1Trgpb22L6kfL1dKahgMkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhoGg6SGwSCpYTBIahgMkhpdgyHJ3kkuSXJbkrVJjupZT9Jo9J5X4uPAFVX19iS7ALt3ridpBLoFQ5K9gFcCpwFU1SZgU696kkan56HEQcB9wGeSfD/JBcP5JR7HKeqkhadnMDwNOBz4ZFUdBvwSOGfqQlV1flWtrKqV2WnXju1Imq2ewbAeWF9V1w1fX8IgKCQtcN2Coao2AHclOXj41quBW3vVkzQ6va9KvA9YNbwisQ54b+d6kkagazBU1RpgZc8akkbPOx8lNQwGSQ2DQVLDYJDUMBgkNQwGSQ2DQVLDYJDUMBgkNQwGSQ2DQVLDYJDUMBgkNQwGSQ2DQVLDYJDUMBgkNQwGSY1uwZDk4CRrJj0eSnJWr3qSRqfbmI9V9UPgUIAky4CfApf1qidpdObrUOLVwI+q6ifzVE/SHPQePn7CycBF032Q5HTgdACWOeettBCkqvoWGMwpcTfwW1V1z5Mtu9Muz6hd9319136kHdnGDVeybdMDmWm5+TiUOB64caZQkLRwzEcwnMITHEZIWpi6BkOS3YHXApf2rCNptHpPUfe/wDN71pA0et75KKlhMEhqGAySGgaDpIbBIKlhMEhqGAySGgaDpEb3H1FtjyT3Adv70+xnAfd3aGchWKrfze81Pr9eVfvMtNCCCoanIsnqqlo57j56WKrfze+18HkoIalhMEhqLIVgOH/cDXS0VL+b32uBW/TnGCSN3lLYY5A0YgaDpMaiDoYkxyX5YZLbk5wz7n5GIcn+Sb6RZG2SW5KcOe6eRinJsiTfT/KVcfcySkn2TnJJktuGf3ZHjbunuVi05xiGk9j8F4Oh49YD3wNOqapbx9rYHCV5LvDcqroxyZ7ADcCbF/v3mpDkT4GVwF5VdcK4+xmVJJ8Dvl1VFwxHRt+9qh4cd19P1WLeYzgSuL2q1lXVJuBi4MQx9zRnVfWzqrpx+PxhYC2w33i7Go0kK4A3ABeMu5dRSrIX8Erg0wBVtWkxhwIs7mDYD7hr0uv1LJG/QBOSHAgcBlw33k5G5jzgbGDbuBsZsYOA+4DPDA+TLkiyfNxNzcViDobpJs1YnMdF00iyB/Al4Kyqemjc/cxVkhOAe6vqhnH30sHTgMOBT1bVYcAvgUV9zmsxB8N6YP9Jr1cwmPFq0UuyM4NQWFVVS2Xo/aOBNyW5g8Fh37FJPj/elkZmPbC+qib27C5hEBSL1mIOhu8BL0zy/OHJnpOBL4+5pzlLEgbHqmur6mPj7mdUqurcqlpRVQcy+LO6uqrePea2RqKqNgB3JTl4+NargUV9sni+JrUduarakuQM4EpgGXBhVd0y5rZG4WjgVOCmJGuG732gqi4fY0+a2fuAVcP/Sa0D3jvmfuZk0V6ulNTPYj6UkNSJwSCpYTBIahgMkhoGg6SGwbCDSrJvkouT/CjJrUkuT/IbT7DsgUlunu8eNT4Gww5oeBPVZcA1VfWCqjoE+ADwnPF2poXCYNgxHQNsrqpPTbxRVWuAa5N8JMnNSW5KctLUFZOcluQTk15/Jcmrhs8fSfJ3SW5I8rUkRya5Jsm6JG+atP6lSa5I8t9JPtz922q7GQw7phczGOdhqrcChwIvBV4DfGQ4PsRsLWewF/Iy4GHgbxiMl/EW4EOTljsUOAl4CXBSkv2nbkjjZTBoslcAF1XV1qq6B/gmcMR2rL8JuGL4/Cbgm1W1efj8wEnLfb2qflFVv2Lwm4Jfn3PnGimDYcd0C/Cyad6f7qfsU23h8f/dPH3S8831//fYbwM2AlTVNh7/u5yNk55vZRH/ZmepMhh2TFcDuyb5o4k3khwB/JzBrv2yJPswGJXo+inr3gEcmmSn4SHAkfPUs+aRSb0DqqpK8hbgvOEgur9i8Bf+LGAP4AcMBr05u6o2DEeSmvDvwI8ZHB7cDNw4f51rvvjrSkkNDyUkNQwGSQ2DQVLDYJDUMBgkNQwGSQ2DQVLj/wB+1tZMSdRhZQAAAABJRU5ErkJggg==
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="resources_ID"></a></p>
-<h2 id="Aditional-Resources">Aditional Resources<a class="anchor-link" href="#Aditional-Resources">&#182;</a></h2><p>For more information about the MAST archive and details about mission data:
-<br>
-<br><a href="https://mast.stsci.edu/api/v0/index.html">MAST API</a>
-<br><a href="https://archive.stsci.edu/kepler/">Kepler Archive Page (MAST)</a>
-<br><a href="https://archive.stsci.edu/kepler/manuals/archive_manual.pdf">Kepler Archive Manual</a>
-<br><a href="https://exo.mast.stsci.edu/exo/ExoMast/html/exomast.html">Exo.MAST website</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a id="about_ID"></a></p>
-<h2 id="About-this-Notebook">About this Notebook<a class="anchor-link" href="#About-this-Notebook">&#182;</a></h2><p><strong>Author:</strong> Josie Bunnell, STScI SASP Intern
-<br><strong>Updated On:</strong> 08/10/2018</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="#title_ID">Top of Page</a>
-<img style="float: right;" src="./stsci_pri_combo_mark_horizonal_white_bkgd.png" alt="stsci_pri_combo_mark_horizonal_white_bkgd" width="200px"/></p>
-
-</div>
-</div>
 </div>
     </div>
   </div>
