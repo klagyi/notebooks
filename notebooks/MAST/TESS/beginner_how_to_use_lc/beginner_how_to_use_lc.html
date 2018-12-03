@@ -13183,7 +13183,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Understanding-The-Light-Curve-FITS-File-Structure">Understanding The Light Curve FITS File Structure<a class="anchor-link" href="#Understanding-The-Light-Curve-FITS-File-Structure">&#182;</a></h2><p>TESS light curve FITS files contain a primary HDU with metadata stored in the header.  The first extension HDU contains more metadata in the header, and stores arrays of data in a binary FITS table, which include the timestamps, SAP fluxes, and PDCSAP fluxes.  The second extension HDU consists of an image that contains the collected pixels for this target, and records information about them, such as which of those pixels were used in the optimal photometric aperture to create the SAP fluxes.  Let's examine the structure of the FITS file using the astropy.fits "info" function, which shows the FITS file format in more detail.</p>
+<h2 id="Understanding-The-Light-Curve-FITS-File-Structure">Understanding The Light Curve FITS File Structure<a class="anchor-link" href="#Understanding-The-Light-Curve-FITS-File-Structure">&#182;</a></h2><p>TESS light curve FITS files contain a primary HDU with metadata stored in the header.  The first extension HDU contains more metadata in the header, and stores arrays of data in a binary FITS table, which include the timestamps, SAP fluxes, and PDCSAP fluxes.  The second extension HDU consists of an image that contains the collected pixels for this target, and records information about them, such as which of those pixels were used in the optimal photometric aperture to create the SAP fluxes.  Let's examine the structure of the FITS file using the astropy.fits <code>info</code> function, which shows the FITS file format in more detail.</p>
 
 </div>
 </div>
@@ -13226,7 +13226,7 @@ No.    Name      Ver    Type      Cards   Dimensions   Format
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's examine the binary table in the first FITS extension, since that contains the arrays of timestamps and fluxes we want to plot.  We will use the astropy.fits "getdata" function to access the table from the first extension HDU, and then show the columns of the table.  We can see included in the table are columns for the timestamps in TESS BJD format (<strong>TIME</strong>), SAP flux (<strong>SAP_FLUX</strong>), and PDCSAP flux (<strong>PDCSAP_FLUX</strong>).</p>
+<p>Let's examine the binary table in the first FITS extension, since that contains the arrays of timestamps and fluxes we want to plot.  We will use the astropy.fits <code>getdata</code> function to access the table from the first extension HDU, and then show the columns of the table.  We can see included in the table are columns for the timestamps in TESS BJD format (<strong>TIME</strong>), SAP flux (<strong>SAP_FLUX</strong>), and PDCSAP flux (<strong>PDCSAP_FLUX</strong>).</p>
 
 </div>
 </div>
